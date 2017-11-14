@@ -17,3 +17,15 @@ COPY ansible.inventory /etc/ansible/inventory/
 COPY {{ docker_playbook }} /etc/ansible/playbook.yaml
 
 RUN ansible-playbook -i /etc/ansible/inventory/localhost /etc/ansible/playbook.yaml
+
+{% for port in docker_expose %}
+EXPOSE {{ port }}
+{% endfor %}
+
+{% if docker_entrypoint is defined -%}
+ENTRYPOINT {{ docker_entrypoint }}
+{% endif -%}
+
+{%- if docker_cmd is defined %}
+CMD {{ docker_cmd }}
+{%- endif %}

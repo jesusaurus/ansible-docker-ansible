@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  vars:
+    docker_dir: /opt/docker/ada-example
+    docker_playbook: docker-config.yaml
+    docker_image_name: ada-dnsmasq
+    docker_entrypoint: '["dnsmasq", "-d"]'
+    docker_expose:
+      - 53/tcp
+      - 53/udp
+
+  tasks:
+    - name: Prepare docker config
+      include_role:
+        name: ada_prep
+
+    - name: Give docker its playbook to run
+      copy:
+        src: dnsmasq.yaml
+        dest: "{{ docker_dir }}/{{ docker_playbook }}"
+
+    - name: Build docker image
+      include_role:
+        name: ada_build
+
+    - name: Run a container from the image
+      docker_container:
+        image: '{{ docker_image_name }}'
+        name: ada-example
+        capabilities:
+          - NET_ADMIN
+        network_mode: host

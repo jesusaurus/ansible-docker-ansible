@@ -3,10 +3,26 @@
   include_vars: '{{ ansible_os_family }}.yaml'
   failed_when: false
 
+- name: Check for required variables
+  fail: msg="Variable '{{ item }}' is not defined"
+  when: item not in vars
+  with_items:
+    - docker_playbook
+
+- name: Start and enable docker service
+  service:
+    name: '{{ docker_service }}'
+    state: started
+    enabled: true
+
 - name: Create docker working directory
   file:
     path: '{{ docker_dir }}'
     state: directory
+
+- name: Check for CMD and/or ENTRYPOINT
+  fail: msg="Either 'docker_cmd' or 'docker_entrypoint' or both must be defined"
+  when: "'docker_cmd' not in vars and 'docker_entrypoint' not in vars"
 
 - name: Create Dockerfile
   template:

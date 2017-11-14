@@ -1,4 +1,4 @@
 ---
 docker_dir: /opt/docker
+docker_service: docker
 dockerfile: opensuse
-docker_expose: []

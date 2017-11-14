@@ -1,0 +1,19 @@
+---
+- name: Check for required variables
+  fail: msg="Variable '{{ item }}' is not defined"
+  when: item not in vars
+  with_items:
+    - docker_playbook
+    - docker_image_name
+
+- name: Playbook to run during docker image build
+  stat:
+    path: "{{ docker_dir }}/{{ docker_playbook }}"
+  register: p
+  failed_when: p.stat.exists == false
+
+- name: Build the docker image
+  docker_image:
+    name: "{{ docker_image_name }}"
+    path: "{{ docker_dir }}"
+    force: true
