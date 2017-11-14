@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  vars:
+    docker_dir: /opt/docker/haefen
+    docker_playbook: haefen.yaml
+
+  roles:
+    - role: ada_prep

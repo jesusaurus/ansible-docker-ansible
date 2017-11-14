@@ -1,0 +1,19 @@
+FROM opensuse:leap
+
+RUN zypper ref && zypper --non-interactive dup
+
+RUN zypper --non-interactive in python python-xml wget && \
+    wget -O /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
+    python /tmp/get-pip.py
+
+RUN pip install -U pip setuptools
+
+RUN pip install -U ansible
+
+COPY ansible.cfg /etc/ansible/ansible.cfg
+
+COPY ansible.inventory /etc/ansible/inventory/
+
+COPY {{ docker_playbook }} /etc/ansible/playbook.yaml
+
+RUN ansible-playbook -i /etc/ansible/inventory/localhost /etc/ansible/playbook.yaml

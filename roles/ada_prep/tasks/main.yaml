@@ -1,0 +1,30 @@
+---
+- name: Include OS Family variables
+  include_vars: '{{ ansible_os_family }}.yaml'
+  failed_when: false
+
+- name: Create docker working directory
+  file:
+    path: '{{ docker_dir }}'
+    state: directory
+
+- name: Create Dockerfile
+  template:
+    src: "Dockerfile.{{ dockerfile }}"
+    dest: "{{ docker_dir }}/Dockerfile"
+
+- name: Create Docker ansible.cfg
+  template:
+    src: docker.ansible.cfg
+    dest: "{{ docker_dir }}/ansible.cfg"
+
+- name: Create docker ansible inventory directory
+  file:
+    path: '{{ docker_dir }}/ansible.inventory'
+    state: directory
+
+- name: Create Docker ansible localhost inventory
+  template:
+    src: docker.ansible.localhost
+    dest: "{{ docker_dir }}/ansible.inventory/localhost"
+
